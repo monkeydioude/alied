@@ -1,0 +1,60 @@
+<html>
+    <head></head>
+    <body>
+        <form style="margin:0;" id="form">
+            <input id="operation" type="text" name="operation" value="(x ^ y) % 9" />
+            <input type="submit" name="submit" />
+        </form>
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 9" />
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 5" />
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 17" />
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 33" />
+        <input class="input_operation" name="operation" type="submit" value="(x * y) & 64" />
+        <input class="input_operation" name="operation" type="submit" value="(x * y) & 24" />
+        <input class="input_operation" name="operation" type="submit" value="(x * y) & 47" />
+        <input class="input_operation" name="operation" type="submit" value="(x | y) % 7" />
+        <input class="input_operation" name="operation" type="submit" value="(x | y) % 17" />
+        <input class="input_operation" name="operation" type="submit" value="(x | y) % 29" />
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) < 77" />
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) < 214" />
+        <input class="input_operation" name="operation" type="submit" value="(x ^ y) < 120" />
+        <br />
+        <input class="input_operation" name="operation" type="submit" value="((x ^ y) % 51 ) & ((x ^ y) % 19)" />
+        <input class="input_operation" name="operation" type="submit" value="(x * y) & (64* (x*y))" />
+        <input class="input_operation" name="operation" type="submit" value="(x * x) & (64* (y*y))" />
+        <br />
+        <canvas id="canvas" width="1024" height="1024"></canvas>
+
+        <script>
+            const context = canvas.getContext("2d")
+            const draw = (op) => {
+                console.log(op)
+                context.clearRect(0, 0, 1024, 1024)
+                for (let x = 0; x < 256; x++) {
+                    for (let y = 0; y < 256; y++) {
+                        if (eval(op)) {
+                            // context.fillStyle = `#${x^y%255}${eval(op)}${eval(op)}`
+                            context.fillRect(x*4, y*4, 4, 4);
+                        }
+                    }
+                }
+                return false
+            }
+
+            const submitted = (e) => {
+                e.preventDefault()
+                draw(operation.value)
+            }
+            const op_submit = (e) =>{
+                e.preventDefault()
+                draw(e.currentTarget.value)
+                operation.value = e.currentTarget.value
+            }
+            form.addEventListener("submit", submitted, false)
+            document.querySelectorAll(".input_operation").forEach(it => it.addEventListener("click", op_submit, false))
+            document.addEventListener("DOMContentLoaded", (event) => {
+                draw("(x ^ y) % 9")
+            });
+        </script>
+    </body>
+</html>
