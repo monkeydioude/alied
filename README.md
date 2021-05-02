@@ -15,6 +15,7 @@ Usage: install [index.html](index.html) on a web server.
 - `v.{variable name}={value}`: the value is either a single integer, or an integer range of the form `{start}..{end}`.
 - `anim=true`: starts the pattern animation, if possible. See Animation below.
 - `delay={milliseconds}`: set the animation delay.
+- `delta={number}`: value added between each animation loop. Defaults to 1.
 - `debug=true`: prints debug statements in the console.
 
 ## Expression ##

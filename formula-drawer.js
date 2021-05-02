@@ -156,6 +156,14 @@ function FormulaDrawer(canvas) {
 				animDelay = Math.min(Math.max(animDelayMin, work), animDelayMax);
 			}
 		}
+		p = 'delta';
+		work = getFirstParam(conf, p, null);
+		if(null !== work) {
+			work = parseNum(work, p, null);
+			if(null !== work) {
+				animDelta = work;
+			}
+		}
 	}
 	
 	function replaceOperatorAliases(value) {
