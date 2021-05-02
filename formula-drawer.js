@@ -199,7 +199,7 @@ function FormulaDrawer(canvas) {
 			eval(funkCode);
 		}
 		catch(e) {
-			console.error('cannot compile formula [%s]: %s', funckCode, e);
+			console.error('cannot compile formula [%s]: %s', funkCode, e);
 			formula.op = defaultOp;
 		}
 	};
