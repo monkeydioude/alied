@@ -24,7 +24,7 @@ Usage: install [index.html](index.html) on a web server.
 
 All other variables must be lowercase and have only one letter.
 
-The aliases for special URL characters allows to type expression in the browser location bar in a more readable way:
+The aliases for special URL characters allow to type expression in the browser location bar in a more readable way:
 - A : `&`: __A__mpersand for __A__ND operator.
 - D : `/`: __D__ivide operator.
 - M : `%`: __M__odulo operator.
