@@ -177,7 +177,7 @@ function FormulaDrawer(canvas) {
 			if(DBG) { console.log('-- compile: formula already compiled'); }
 			return;
 		}
-		var funkCode = 'function(x, y';
+		var funkCode = 'formula.op = function(x, y';
 		if(undefined !== formula.v) {
 			for(var i in formula.v) {
 				funkCode += ',' + i;
@@ -188,10 +188,10 @@ function FormulaDrawer(canvas) {
 		funkCode += ') { return (' + formula.code + '); }';
 		if(DBG) { console.log('-- compile: formula op [%s]', funkCode); }
 		try {
-			eval('formula.op = ' + funkCode);
+			eval(funkCode);
 		}
 		catch(e) {
-			console.error('cannot compile formula [%s] %s', e);
+			console.error('cannot compile formula [%s]: %s', funckCode, e);
 			formula.op = defaultOp;
 		}
 	};
