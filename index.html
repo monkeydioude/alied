@@ -1,62 +1,132 @@
+<!DOCTYPE html>
 <html>
-    <head></head>
-    <body>
-        <form style="margin:0;" id="form">
-            <input id="operation" type="text" name="operation" value="(x ^ y) % 9" />
-            <input type="submit" name="submit" />
-        </form>
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 9" />
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 5" />
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 17" />
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) % 33" />
-        <input class="input_operation" name="operation" type="submit" value="(x * y) & 64" />
-        <input class="input_operation" name="operation" type="submit" value="(x * y) & 24" />
-        <input class="input_operation" name="operation" type="submit" value="(x * y) & 47" />
-        <input class="input_operation" name="operation" type="submit" value="(x | y) % 7" />
-        <input class="input_operation" name="operation" type="submit" value="(x | y) % 17" />
-        <input class="input_operation" name="operation" type="submit" value="(x | y) % 29" />
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) < 77" />
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) < 214" />
-        <input class="input_operation" name="operation" type="submit" value="(x ^ y) < 120" />
-        <br />
-        <input class="input_operation" name="operation" type="submit" value="((x ^ y) % 51 ) & ((x ^ y) % 19)" />
-        <input class="input_operation" name="operation" type="submit" value="(x * y) & (64* (x*y))" />
-        <input class="input_operation" name="operation" type="submit" value="(x * x) & (64* (y*y))" />
-        <input class="input_operation" name="operation" type="submit" value="x & y * ((x*y)/ y & 8)" />
-        <input class="input_operation" name="operation" type="submit" value="x & y * ((x*y)/ y & 9)" />
-        <br />
-        <canvas id="canvas" width="1024" height="1024"></canvas>
+<head>
+	<meta charset="utf-8"/>
+	<title>Alied: Formula Drawer</title>
+	<script type="text/javascript" src="util.js"></script>
+	<script type="text/javascript" src="formula-drawer.js"></script>
+</head>
+<body>
+	<form style="margin:0;" id="form">
+		<input id="operation" type="text" name="operation" value="(x ^ y) % 9" />
+		<input type="submit" name="submit" />
+		<button id="anim_start">Start</button>
+		<button id="anim_stop">Stop</button>
+		<div id="formula_panel"></div>
+	</form>
+	<canvas id="canvas" width="1024" height="1024"></canvas>
+<script>
 
-        <script>
-            const context = canvas.getContext("2d")
-            const draw = (op) => {
-                console.log(op)
-                context.clearRect(0, 0, 1024, 1024)
-                for (let x = 0; x < 256; x++) {
-                    for (let y = 0; y < 256; y++) {
-                        if (eval(op)) {
-                            // context.fillStyle = `#${x^y%255}${eval(op)}${eval(op)}`
-                            context.fillRect(x*4, y*4, 4, 4);
-                        }
-                    }
-                }
-                return false
-            }
+console.clear();
+var formulas = [
+	{ "name": "op1" , "code": "(x ^ y) % 9"},
+	{ "name": "op2" , "code": "(x ^ y) % 5"},
+	{ "name": "op3" , "code": "(x ^ y) % 17"},
+	{ "name": "op4" , "code": "(x ^ y) % 33"},
+	{ "name": "op5" , "code": "(x * y) & 64"},
+	{ "name": "op6" , "code": "(x * y) & 24"},
+	{ "name": "op7" , "code": "(x * y) & 47"},
+	{ "name": "op8" , "code": "(x | y) % 7"},
+	{ "name": "op9" , "code": "(x | y) % 17"},
+	{ "name": "op10", "code": "(x | y) % 29"},
+	{ "name": "op11", "code": "(x ^ y) < 77"},
+	{ "name": "op12", "code": "(x ^ y) < 214"},
+	{ "name": "op13", "code": "(x ^ y) < 120"},
+	{ "name": "op14", "code": "((x ^ y) % 51 ) & ((x ^ y) % 19)"},
+	{ "name": "op15", "code": "(x * y) & (64* (x*y))"},
+	{ "name": "op16", "code": "(x * x) & (64* (y*y))"},
+	{ "name": "op17", "code": "x & y * ((x*y)/ y & 8)"},
+	{ "name": "op18", "code": "x & y * ((x*y)/ y & 9)"},
+	{ "name": "anim1","code": "x & y * ((x*y)/ y & a)",
+		"title": "Anim 1: x & y * ((x*y)/ y & a)",
+		"v": {"a": {"start": 3, "end": 128 } },
+		"anim": { "enabled": true }
+	}
+];
+var name2formulas = {};
+for(var i in formulas) {
+	var f = formulas[i];
+	if(undefined === f.name) {
+		f.name = '_' + i
+	}
+	if(undefined !== name2formulas[f.name]) {
+		console.error('formula already defined: %s', f.name)
+		continue
+	}
+	name2formulas[f.name] = f
+}
 
-            const submitted = (e) => {
-                e.preventDefault()
-                draw(operation.value)
-            }
-            const op_submit = (e) =>{
-                e.preventDefault()
-                draw(e.currentTarget.value)
-                operation.value = e.currentTarget.value
-            }
-            form.addEventListener("submit", submitted, false)
-            document.querySelectorAll(".input_operation").forEach(it => it.addEventListener("click", op_submit, false))
-            document.addEventListener("DOMContentLoaded", (event) => {
-                draw("(x ^ y) % 9")
-            });
-        </script>
-    </body>
+
+const context = canvas.getContext("2d")
+const drawer = new FormulaDrawer(context)
+
+const submitted = (e) => {
+	e.preventDefault()
+	drawer.draw(operation.value)
+}
+const op_submit = (e) => {
+	e.preventDefault()
+	const opName = e.currentTarget.name;
+	console.log('click op %s', opName);
+	const formula = name2formulas[opName];
+	console.log('click op %s: %s', opName, formula);
+	if(undefined === formula) {
+		console.error('unknown op %s', opName);
+		return;
+	}
+	drawer.draw(formula);
+	operation.value = formula.code;
+	if(undefined !== formula.anim && true === formula.anim.enabled) {
+		drawer.startAnim()
+	}
+}
+const startAnim = (e) => {
+	//console.log('-- startAnim')
+	e.preventDefault()
+	drawer.startAnim()
+}
+const stopAnim = (e) => {
+	//console.log('-- stopAnim')
+	e.preventDefault()
+	drawer.stopAnim()
+}
+
+form.addEventListener("submit", submitted, false)
+anim_start.addEventListener("click", startAnim, false)
+anim_stop.addEventListener("click", stopAnim, false)
+
+const buildFormulaControls = (parent, formulas) => {
+	var cssClass = 'input_operation';
+	var elt = document.createElement('div');
+	for(var i = 0; i < formulas.length; i++) {
+
+		var f = formulas[i];
+		if(undefined === f.title) {
+			f.title = f.code;
+		}
+
+		var n = document.createElement('input');
+		n.setAttribute('class', cssClass);
+		n.setAttribute('name', f.name);
+		n.setAttribute('type', 'submit');
+		n.setAttribute('value', f.title);
+		elt.append(n)
+	}
+	parent.append(elt);
+	document.querySelectorAll('.' + cssClass).forEach(it => it.addEventListener("click", op_submit, false))
+}
+
+document.addEventListener("DOMContentLoaded", (event) => {
+	buildFormulaControls(form, formulas);
+	var params = parseUrlQuery(window.location.search);
+	drawer.init(params);
+	var formula = drawer.parseFormula(params, name2formulas, {"code": "(x ^ y) % 9"});
+	drawer.draw(formula);
+	if('true' === getFirstParam(params, 'anim', false)) {
+		drawer.startAnim();
+	}
+	operation.value = formula.code;
+});
+</script>
+</body>
 </html>
