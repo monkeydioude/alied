@@ -14,7 +14,7 @@ function FormulaDrawer(canvas) {
 	var defaultOp = function(x, y) { return x ^ y; };
 	var reservedVariables = {'x': true, 'y': true};
 	var reservedVariablesCount = 2;
-	var operatorAliases = {'A': '&', 'D': '/', 'M': '%', 'P': '+'};
+	var operatorAliases = {'A': '&', 'D': '/', 'G':'<', 'L': '>', 'M': '%', 'P': '+'};
 	var operatorAliasKeys = Object.keys(operatorAliases).join('');
 
 	// to parse variable values from parameters such as URL query

@@ -27,6 +27,8 @@ All other variables must be lowercase and have only one letter.
 The aliases for special URL characters allow to type expression in the browser location bar in a more readable way:
 - A : `&`: __A__mpersand for __A__ND operator.
 - D : `/`: __D__ivide operator.
+- G : `>`: __G__reater than operator.
+- L : `<`: __L__ess than operator.
 - M : `%`: __M__odulo operator.
 - P : `+`: __P__lus operator.
 
@@ -40,4 +42,4 @@ For an animation to start, at least one variable with a range greater than 1 mus
 
 - `https://localhost/alied/?f=op15`
 -  `https://localhost/alied/?code=((x%20^%20y)%20M%20a%20)%20A%20((x%20^%20y)%20M%20b)&v.a=51..109v.b=19&anim=true&delay=500`
-  Same `https://localhost/alied/?code=((x ^ y) M a) A ((x ^ y) M b)&v.a=51..109v.b=19&anim=true&delay=500`
+  Same `https://localhost/alied/?code=((x ^ y) M a) A ((x ^ y) M b)&v.a=51..10&v.b=19&anim=true&delay=500`
