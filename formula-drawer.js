@@ -14,7 +14,7 @@ function FormulaDrawer(canvas) {
 	var defaultOp = function(x, y) { return x ^ y; };
 	var reservedVariables = {'x': true, 'y': true};
 	var reservedVariablesCount = 2;
-	var operatorAliases = {'A': '&', 'D': '/', 'G':'<', 'L': '>', 'M': '%', 'P': '+'};
+	var operatorAliases = {'A': '&', 'C': ':', 'D': '/', 'E': '=', 'G':'>', 'L': '<', 'M': '%', 'N':'!', 'P': '+', 'Q': '?'};
 	var operatorAliasKeys = Object.keys(operatorAliases).join('');
 
 	// to parse variable values from parameters such as URL query
@@ -57,7 +57,7 @@ function FormulaDrawer(canvas) {
 
 				if(undefined === v.actual || null === v.actual) {
 					v.actual = animDelta > -1 ? v.start : v.end;
-					if(DBG) { console.log('--anim init actual %s: %s', i, v.actual); }
+					if(DBG) { console.log('-- anim init actual %s: %s', i, v.actual); }
 				}
 				else {
 					v.actual += animDelta;
@@ -207,7 +207,9 @@ function FormulaDrawer(canvas) {
 	function internalDraw(formula) {
 		var opParams = formula.vv;
 		var op = formula.op;
-		context.clearRect(0, 0, width, height);
+		if(!formula.drawOver) {
+			context.clearRect(0, 0, width, height);
+		}
 		for (let x = 0; x < xMax; x++) {
 			for (let y = 0; y < yMax; y++) {
 				opParams[0] = x;
@@ -265,7 +267,7 @@ function FormulaDrawer(canvas) {
 		else if(undefined !== conf.code) {
 			if(DBG) { console.log('-- parseFormula: from URL [%s]', conf.code); }
 			var code = conf.code;
-			var codeRegex = new RegExp('^[a-z0-9' + operatorAliasKeys + ' +()%<>^*&|/+-]+$');
+			var codeRegex = new RegExp('^[a-z0-9' + operatorAliasKeys + ' +()%<>^&|?:=*/+-]+$');
 			if(codeRegex.test(code)) {
 				var parseErrors = [];
 				code = replaceOperatorAliases(code);
@@ -285,7 +287,7 @@ function FormulaDrawer(canvas) {
 							}
 						}
 						else {
-							// ignore operators '+*-/^' and statement characters '()'
+							// ignore numbers, operators '+*-/^' and grouping characters '()'
 						}
 					}
 				);
@@ -312,6 +314,7 @@ function FormulaDrawer(canvas) {
 						formula.v[i].start = start;
 						formula.v[i].end = end;
 					}
+					formula.drawOver = undefined !== conf.drawOver && (conf.drawOver === "true" || conf.drawOver === true);
 				}
 				else {
 					formula = defaultFormula;
